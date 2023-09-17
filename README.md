@@ -4,13 +4,14 @@
 [![npm downloads][npm-downloads-src]][npm-downloads-href]
 [![License][license-src]][license-href]
 [![Standard JS][standard-js-src]][standard-js-href]
-[![nuxt-device-detect Dev Token](https://badge.devtoken.rocks/nuxt-device-detect)](https://devtoken.rocks/package/nuxt-device-detect)
 
 This module injects flags that indicate a device type into the context and the component instance.
 
 See [demo on CodeSandbox](https://codesandbox.io/s/github/nuxt-community/device-module).
 
-## Setup
+## Setup for Nuxt3
+
+If you use Nuxt2.x use [@nuxtjs/device 2.x](https://github.com/nuxt-community/device-module/tree/v2.1.0).
 
 Add `@nuxtjs/device` to the dev dependencies using yarn or npm to your project.
 
@@ -20,31 +21,17 @@ yarn add --dev @nuxtjs/device
 npm install -D @nuxtjs/device
 ```
 
-Add it to the `buildModules` section of your `nuxt.config`:
+Add it to the `modules` section of your `nuxt.config`:
 
 ```js
 {
-  buildModules: [
+  modules: [
    '@nuxtjs/device',
   ]
 }
 ```
 
 That's it, you can now use `$device` in your [Nuxt](https://nuxtjs.org) app ✨
-
-## TypeScript support
-
-Add the types to your `"types"` array in `tsconfig.json` after the `@nuxt/types` entry.
-
-:warning: Use `@nuxt/vue-app` instead of `@nuxt/types` for nuxt < 2.9.
-
-```json
-{
-  "compilerOptions": {
-    "types": ["@nuxt/types", "@nuxtjs/device"]
-  }
-}
-```
 
 ## Flags
 
@@ -59,6 +46,7 @@ $device.isDesktopOrTablet
 $device.isIos
 $device.isWindows
 $device.isMacOS
+$device.isApple
 $device.isAndroid
 $device.isFirefox
 $device.isEdge
@@ -71,6 +59,17 @@ $device.isCrawler
 The user agent is also injected an accessible with `$device.userAgent`.
 
 ## Usage
+
+### Composable
+
+You can use the `useDevice()` composable inside a `script setup` to access the flags.
+
+```js
+<script setup>
+const { isMobile } = useDevice();
+</script>
+```
+
 
 ### Switch a view
 
@@ -117,7 +116,7 @@ export default function ({ $device }) {
 
 ```js
 {
-  buildModules: ['@nuxtjs/device'],
+  modules: ['@nuxtjs/device'],
   device: {
     defaultUserAgent: 'Mozilla/5.0 (Linux; Android 5.1.1; Nexus 6 Build/LYZ28E) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/64.0.3282.39 Mobile Safari/537.36'
   }
@@ -128,7 +127,7 @@ export default function ({ $device }) {
 
 ```js
 {
-  buildModules: ['@nuxtjs/device'],
+  modules: ['@nuxtjs/device'],
   device: {
     refreshOnResize: true
   }
@@ -138,15 +137,21 @@ export default function ({ $device }) {
 Note that the default user agent value is set to `Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/64.0.3282.39 Safari/537.36`.
 ## CloudFront Support
 
-If a user-agent is `Amazon CloudFront`, this module checks
-the both headers `CloudFront-Is-Mobile-Viewer` and `CloudFront-Is-Tablet-Viewer`.
+If the `user-agent` is `Amazon CloudFront`, this module checks the following headers :  
 
-Here are the details about the headers:
-https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/header-caching.html#header-caching-web-device
+- `CloudFront-Is-Mobile-Viewer`
+- `CloudFront-Is-Tablet-Viewer`
+- `CloudFront-Is-Desktop-Viewer`
+- `CloudFront-Is-Ios-Viewer`
+- `CloudFront-Is-Android-Viewer`
+
+Here are the details about the headers:  
+[Amazon CloudFront - Headers for determining the viewer's device type
+](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/using-cloudfront-headers.html#cloudfront-headers-device-type)  
 
 ### Caution
 
-`isIos`, `isWindows` and `isMacOS` flags are not available with CloudFront.
+`isWindows` and `isMacOS` flags are not available with CloudFront.
 
 ## Cloudflare Support
 
